@@ -8,3 +8,16 @@ logs/
 *.db
 knowledge/
 .DS_Store
+.venv/
+__pycache__/
+*.pyc
+.env
+output/
+logs/
+*.pdf
+*.db
+knowledge/
+.DS_Store
+*.egg-info/
+dist/
+build/
