@@ -1,0 +1,312 @@
+story_concept_task:
+  description: >
+    Create a magical 10-page story concept for {child_name}'s book about {topic}.
+
+    Child details:
+      Name: {child_name}
+      Age: {age} years old
+      Appearance: {appearance}
+      Style: {style}
+
+    Create exactly 10 page concepts. Each page must include:
+      - Page title (creative, no colons, no numbering)
+      - Core story event for that page
+      - Moral or lesson woven into that page
+      - Supporting character if needed
+
+    Create a natural story arc across 10 pages that fits {topic}.
+    Let the topic guide the arc entirely. For example:
+      An animal story might follow a day in that animal's life
+      A friendship story might show two characters meeting and bonding
+      A bedtime story might follow the evening routine
+      A jungle story might be an exploration adventure
+    Do not force a fixed structure -- let the topic decide the arc.
+
+    IMPORTANT:
+      - {child_name} is the hero on every single page
+      - Never use structural terms like "Act 1" or "Inciting Incident"
+      - Never use colons or dashes as delimiting characters
+      - Overall moral must be gentle and age appropriate for {age} year olds
+  expected_output: >
+    A JSON object with these exact top-level fields: book_title, child_name,
+    topic, central_moral, arc_description, pages.
+    The pages field contains exactly 10 objects each with: page_number, title,
+    story_event, moral_thread, characters.
+    Return the fields directly at the top level — do NOT wrap in description or properties.
+  agent: idea_architect
+  output_file: output/story_concept.json
+
+
+# ── Story Writing — 3 tasks, same agent, pages batched ────────────────────────
+
+write_pages_1_to_3_task:
+  description: >
+    Write the story text for pages 1, 2, and 3 of {child_name}'s book about {topic}.
+
+    These are the INTRODUCTION pages — introduce {child_name} and the world.
+
+    Writing rules:
+      - {child_name} is the hero — use their name on every page
+      - Style: {style}
+      - Age group: {age} years old — simple vocabulary only
+      - Maximum 4 sentences per page
+      - Maximum 8 words per sentence
+      - If rhyming — pages must rhyme
+      - Warm encouraging tone
+      - End each page on a curious or positive note
+
+    Write pages 1, 2, and 3 only. No other pages.
+  expected_output: >
+    Story text for pages 1, 2, and 3.
+    Each page has a title and 2-4 short sentences.
+  agent: story_weaver
+  context:
+    - story_concept_task
+  output_file: output/pages_1_to_3.json
+
+write_pages_4_to_6_task:
+  description: >
+    Write the story text for pages 4, 5, and 6 of {child_name}'s book about {topic}.
+
+    These are the CHALLENGE pages — {child_name} faces the main problem.
+
+    Writing rules:
+      - {child_name} is the hero — use their name on every page
+      - Style: {style}
+      - Age group: {age} years old — simple vocabulary only
+      - Maximum 4 sentences per page
+      - Maximum 8 words per sentence
+      - If rhyming — pages must rhyme
+      - Build gentle tension — nothing scary for {age} year olds
+      - Pages must flow naturally from page 3
+
+    Write pages 4, 5, and 6 only. No other pages.
+  expected_output: >
+    Story text for pages 4, 5, and 6.
+    Each page has a title and 2-4 short sentences.
+    Flows naturally from the introduction pages.
+  agent: story_weaver
+  context:
+    - story_concept_task
+    - write_pages_1_to_3_task
+  output_file: output/pages_4_to_6.json
+
+write_pages_7_to_10_task:
+  description: >
+    Write the story text for pages 7, 8, 9, and 10 of {child_name}'s book about {topic}.
+
+    Follow the arc planned by idea_architect for pages 7 to 10.
+
+    Writing rules:
+      - {child_name} is the hero — use their name on every page
+      - Style: {style}
+      - Age group: {age} years old — simple vocabulary only
+      - Maximum 4 sentences per page
+      - Maximum 8 words per sentence
+      - If rhyming — pages must rhyme
+      - End the book on the warmest, most uplifting note possible
+      - Page 10 must end the story on the warmest note possible
+
+    Write pages 7, 8, 9, and 10 only. No other pages.
+  expected_output: >
+    Story text for pages 7, 8, 9, and 10.
+    Each page has a title and 2-4 short sentences.
+    Page 10 ends the story warmly following the planned arc.
+  agent: story_weaver
+  context:
+    - story_concept_task
+    - write_pages_1_to_3_task
+    - write_pages_4_to_6_task
+  output_file: output/pages_7_to_10.json
+
+
+# ── Illustration Prompts — 3 tasks, same agent, pages batched ─────────────────
+
+illustrate_pages_1_to_3_task:
+  description: >
+    Create DALL-E image prompts for pages 1, 2, and 3 of {child_name}'s book.
+
+    Child appearance to use on EVERY prompt:
+      {appearance}
+      Age: {age} years old
+      Name: {child_name}
+
+    For each page prompt include:
+      - {child_name}'s exact appearance: {appearance}
+      - The scene from that page's story
+      - Art style: warm bright friendly children's book illustration
+      - Color palette: soft vibrant toddler friendly
+      - Composition: simple uncluttered large central character
+      - No scary elements no dark colors no complex backgrounds
+
+    Create prompts for pages 1, 2, and 3 only.
+  expected_output: >
+    Three DALL-E prompts for pages 1, 2, and 3.
+    Each prompt describes {child_name} with consistent appearance.
+  agent: visual_storyteller
+  context:
+    - story_concept_task
+    - write_pages_1_to_3_task
+  output_file: output/illustrations_1_to_3.json
+
+illustrate_pages_4_to_6_task:
+  description: >
+    Create DALL-E image prompts for pages 4, 5, and 6 of {child_name}'s book.
+
+    Child appearance to use on EVERY prompt:
+      {appearance}
+      Age: {age} years old
+      Name: {child_name}
+
+    For each page prompt include:
+      - {child_name}'s exact appearance: {appearance}
+      - The scene from that page's story
+      - Art style: warm bright friendly children's book illustration
+      - MUST match the same art style as pages 1-3
+      - No scary elements even during the challenge pages
+
+    Create prompts for pages 4, 5, and 6 only.
+  expected_output: >
+    Three DALL-E prompts for pages 4, 5, and 6.
+    Consistent with pages 1-3 art style and character appearance.
+  agent: visual_storyteller
+  context:
+    - story_concept_task
+    - write_pages_4_to_6_task
+    - illustrate_pages_1_to_3_task
+  output_file: output/illustrations_4_to_6.json
+
+illustrate_pages_7_to_10_task:
+  description: >
+    Create DALL-E image prompts for pages 7, 8, 9, and 10 of {child_name}'s book.
+
+    Child appearance to use on EVERY prompt:
+      {appearance}
+      Age: {age} years old
+      Name: {child_name}
+
+    For each page prompt include:
+      - {child_name}'s exact appearance: {appearance}
+      - The scene from that page's story
+      - Art style: warm bright friendly children's book illustration
+      - MUST match the same art style as all previous pages
+      - Page 10 illustration must feel like the perfect ending
+        warmest brightest scene that fits the story arc
+
+    Create prompts for pages 7, 8, 9, and 10 only.
+  expected_output: >
+    Four DALL-E prompts for pages 7, 8, 9, and 10.
+    Page 10 illustration perfectly closes the story arc.
+  agent: visual_storyteller
+  context:
+    - story_concept_task
+    - write_pages_7_to_10_task
+    - illustrate_pages_4_to_6_task
+  output_file: output/illustrations_7_to_10.json
+
+
+# ── Continuity and Review ──────────────────────────────────────────────────────
+
+continuity_check_task:
+  description: >
+    Review the complete 10-page story and all illustration prompts
+    for {child_name}'s book about {topic} for consistency.
+
+    Check character consistency:
+      - Is {child_name} named correctly on every page?
+      - Do supporting characters keep the same name throughout?
+      - Does {child_name}'s personality stay consistent?
+
+    Check plot consistency:
+      - Does each page flow naturally from the previous?
+      - Is the moral thread consistent across all 10 pages?
+      - Are there any plot holes or confusing jumps?
+
+    Check visual consistency:
+      - Is {child_name}'s appearance identical in all 10 prompts?
+      - Is the art style description consistent across all pages?
+
+    Check age appropriateness:
+      - Is every concept suitable for {age} year olds?
+      - Any scary or confusing elements?
+
+    If issues found — provide specific corrections per page.
+    If all good — confirm book passes all consistency checks.
+  expected_output: >
+    A consistency report listing any issues with page references
+    and corrections. Or confirmation that all 10 pages pass.
+  agent: continuity_guardian
+  context:
+    - story_concept_task
+    - write_pages_1_to_3_task
+    - write_pages_4_to_6_task
+    - write_pages_7_to_10_task
+    - illustrate_pages_1_to_3_task
+    - illustrate_pages_4_to_6_task
+    - illustrate_pages_7_to_10_task
+  output_file: output/continuity_report.json
+
+copy_review_task:
+  description: >
+    Review the final story text of {child_name}'s book about {topic}
+    for copy quality grammar and age-appropriateness.
+
+    Check grammar and punctuation:
+      - Correct grammar on every page
+      - Proper punctuation throughout
+      - No run-on sentences
+
+    Check age appropriateness for {age} year olds:
+      - No words too complex for {age} year olds
+      - Maximum 8 words per sentence
+      - Concepts simple and clear
+
+    Check style:
+      - {style} maintained across all 10 pages
+      - If rhyming — all rhymes must actually rhyme
+      - Tone warm and encouraging throughout
+
+    Provide corrected text for any pages that need changes.
+  expected_output: >
+    Copy review report with corrections per page if needed.
+    Final polished text for any changed pages.
+    Confirmation the book is ready to publish.
+  agent: copy_reviewer
+  context:
+    - write_pages_1_to_3_task
+    - write_pages_4_to_6_task
+    - write_pages_7_to_10_task
+    - continuity_check_task
+  output_file: output/copy_review.json
+
+publishing_task:
+  description: >
+    Assemble {child_name}'s final 10-page book about {topic} into a PDF.
+
+    Steps:
+      1. Combine all story text and illustration prompts page by page
+      2. Call generate_pdf tool with all pages combined as pages_json
+         Include title, text, and illustration_prompt for each page
+      3. The generate_pdf tool will generate DALL-E illustrations
+         and assemble the PDF automatically
+
+    Do NOT send email — email is handled separately after human approval.
+    Just generate the PDF and return the file path.
+
+    IMPORTANT for pages_json format:
+      Each page needs: page_number, title, text, illustration_prompt
+      Pass all 10 pages as a JSON array string
+  expected_output: >
+    The file path to the generated PDF.
+    Return exactly the path string from generate_pdf tool output.
+    Example: output/aryan_storylens_book.pdf
+  agent: book_publisher
+  context:
+    - write_pages_1_to_3_task
+    - write_pages_4_to_6_task
+    - write_pages_7_to_10_task
+    - illustrate_pages_1_to_3_task
+    - illustrate_pages_4_to_6_task
+    - illustrate_pages_7_to_10_task
+    - copy_review_task
+  output_file: output/published_book.json
