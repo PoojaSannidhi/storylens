@@ -12,9 +12,9 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 
-# load_dotenv MUST be before any crewai imports
-dotenv_path = Path(__file__).resolve().parents[4] / ".env"
-load_dotenv(dotenv_path=dotenv_path, override=True)
+# HuggingFace injects secrets as env vars automatically
+# load_dotenv() handles local .env file
+load_dotenv()
 
 import queue
 import threading
