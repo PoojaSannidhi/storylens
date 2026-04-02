@@ -135,29 +135,28 @@ def generate_book(
     # Find PDF path — check output folder
     # crewai run executes from project root so output/ is relative to that
     pdf_path = None
-    project_root = Path(__file__).resolve().parents[2]  # storylens/
     safe_name = child_name.strip().lower().replace(" ", "_")
 
-    # Check multiple possible locations
-    candidates = [
-        project_root / "output" / f"{safe_name}_storylens_book.pdf",
-        Path("output") / f"{safe_name}_storylens_book.pdf",
-        Path(f"output/{safe_name}_storylens_book.pdf"),
+    # Search for PDF in output/ relative to cwd or app location
+    search_roots = [
+        Path.cwd(),
+        Path(__file__).resolve().parent,
+        Path(__file__).resolve().parents[1],
+        Path(__file__).resolve().parents[2],
     ]
 
-    for candidate in candidates:
+    for root in search_roots:
+        candidate = root / "output" / f"{safe_name}_storylens_book.pdf"
         if candidate.exists():
             pdf_path = str(candidate)
             break
-
-    if not pdf_path:
-        # Search any output folder for latest PDF
-        for output_dir in [project_root / "output", Path("output")]:
-            if output_dir.exists():
-                pdfs = sorted(output_dir.glob("*.pdf"), key=os.path.getmtime)
-                if pdfs:
-                    pdf_path = str(pdfs[-1])
-                    break
+        # Also check for any PDF in output/
+        output_dir = root / "output"
+        if output_dir.exists():
+            pdfs = sorted(output_dir.glob("*.pdf"), key=os.path.getmtime)
+            if pdfs:
+                pdf_path = str(pdfs[-1])
+                break
 
     print(f"PDF search: safe_name={safe_name}, found={pdf_path}")
 
