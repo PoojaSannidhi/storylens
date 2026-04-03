@@ -38,7 +38,7 @@ from storylens.schemas import (
 )
 from storylens.tools.email_tools import send_email
 from storylens.tools.pdf_tools import generate_pdf
-
+os.makedirs("logs", exist_ok=True)
 
 # ── Guardrail functions ────────────────────────────────────────────────────────
 # CrewAI requires guardrails to return exactly (bool, str | None)
